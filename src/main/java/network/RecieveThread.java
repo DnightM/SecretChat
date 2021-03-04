@@ -19,7 +19,7 @@ public class RecieveThread extends Thread {
 			BufferedReader br = new BufferedReader(new InputStreamReader(m_Socket.getInputStream()));
 			String line;
 			while ((line = br.readLine()) != null) {
-				System.out.println("상대방 :" + line);
+				System.out.println(line);
 			}
 			br.close();
 			System.out.println("상대방의 연결이 끊어짐");
