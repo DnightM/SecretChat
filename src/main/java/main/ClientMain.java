@@ -1,7 +1,7 @@
-package client;
+package main;
 
-import network.SendThread;
-import network.RecieveThread;
+import client.RecieveThread;
+import client.SendThread;
 
 import java.net.Socket;
 

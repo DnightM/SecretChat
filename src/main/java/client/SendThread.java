@@ -1,4 +1,4 @@
-package network;
+package client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,8 +15,9 @@ public class SendThread extends Thread {
 		this.br = new BufferedReader(new InputStreamReader(System.in));
 		this.pw = new PrintWriter(_socket.getOutputStream());
 		this.name = name;
-		this.pw.println(name);
-		this.pw.flush();
+
+		pw.println(name);
+		pw.flush();
 	}
 
 	public void run() {
@@ -25,8 +26,8 @@ public class SendThread extends Thread {
 			String line;
 			while ((line = br.readLine()) != null) {
 				System.out.println(name + " : " + line);
-//				pw.println(line);
-//				pw.flush();
+				pw.println(line);
+				pw.flush();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

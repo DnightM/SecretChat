@@ -4,13 +4,13 @@ plugins {
 }
 
 ext {
-	process = 'server'
-//	process = 'client'
+//	process = 'Server'
+	process = 'Client'
 
 	processName = "test_${process}"
 }
 
-mainClassName = "${process}.Main"
+mainClassName = "main.${process}Main"
 version '0.0.1'
 
 java {

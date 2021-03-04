@@ -16,7 +16,7 @@ public class ClientThread extends Thread {
 		this.pw = new PrintWriter(sc.getOutputStream());
 
 		this.name = br.readLine().replaceAll("[^!-~ㄱ-힣]", "").trim();
-		this.write("[" + this.name + "] Connect");
+		ServerSender.sendMsg(null, "[" + this.name + "] Connect");
 	}
 
 	@Override
@@ -25,10 +25,11 @@ public class ClientThread extends Thread {
 		try {
 			String line;
 			while ((line = br.readLine()) != null) {
-				ServerThread.MSG_QUEUE.add(new ClientMsgVo(this, name + " : " + line));
+				ServerSender.sendMsg(this, name + " : " + line);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			ServerSender.sendMsg(this, "[" + name + "] Disconnect");
+			ClientManager.remove(this);
 		}
 	}
 
