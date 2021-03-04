@@ -1,0 +1,43 @@
+plugins {
+	id 'java'
+	id 'application'
+}
+
+ext {
+	process = 'server'
+//	process = 'client'
+
+	processName = "test_${process}"
+}
+
+mainClassName = "${process}.Main"
+version '0.0.1'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+jar {
+	manifest {
+		attributes 'Title': "${processName}", 'Version': version, 'Main-Class': mainClassName, 'Class-Path': '.', 'Implementation-Version': version + "_" + new Date().format("yyyyMMddHHmmss")
+	}
+	archiveName "${processName}_" + version + '.jar'
+	dependsOn configurations.runtime
+	from {
+		configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}
+
+repositories {
+	mavenCentral()
+	jcenter()
+}
+
+dependencies {
+	testCompile group: 'junit', name: 'junit', version: '4.12'
+}
