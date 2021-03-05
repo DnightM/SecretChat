@@ -1,5 +1,8 @@
 import org.junit.Test;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+
 public class temp {
 	@Test
 	public void test() {
@@ -7,4 +10,6 @@ public class temp {
 		System.out.println(temp);
 		System.out.println(temp.replaceAll("[^!-~ㄱ-힣]", ""));
 	}
+
+
 }
