@@ -1,5 +1,6 @@
 package server;
 
+import obj.Message;
 import util.Aes128;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ServerSender extends Thread {
 	private final Aes128 aes;
 
-	private final BlockingQueue<ClientMsgVo> MSG_QUEUE = new ArrayBlockingQueue<>(10000);
+	private final BlockingQueue<Message> MSG_QUEUE = new ArrayBlockingQueue<>(10000);
 	private final ArrayList<ClientThread> clientList = new ArrayList<>();
 	private final ReentrantLock lock = new ReentrantLock();
 
@@ -24,12 +25,10 @@ public class ServerSender extends Thread {
 		super.run();
 		while (true) {
 			if (!MSG_QUEUE.isEmpty()) {
-				ClientMsgVo vo = MSG_QUEUE.poll();
-				System.out.println(vo.getMsg()); // 콘솔
-				String tMsg = aes.encrypt(vo.getMsg()); // 최종적으로 보내는 곳에서 암호화
-				ClientThread tCt = vo.getCt();
+				Message m = MSG_QUEUE.poll();
+				System.out.println(m.send()); // 콘솔
 
-				sendToAllClients(tCt, tMsg);
+				sendToAllClients(aes.encrypt(m.send())); // 최종적으로 보내는 곳에서 암호화
 			}
 		}
 	}
@@ -53,44 +52,26 @@ public class ServerSender extends Thread {
 		}
 	}
 
-	public void sendDirect(String msg) {
-		MSG_QUEUE.add(new ClientMsgVo(null, msg));
+	public void sendLogin(String msg) {
+		MSG_QUEUE.add(new Message("[" + aes.decrypt(msg) + "] connect", true));
 	}
 
-	public void send(ClientThread ct, String msg) {
-		MSG_QUEUE.add(new ClientMsgVo(ct, ct.getClientName() + " : " + aes.decrypt(msg))); // 여기서 복호화
+	public void sendLogout(String msg) {
+		MSG_QUEUE.add(new Message("[" + aes.decrypt(msg) + "] disconnect", true));
 	}
 
-	private void sendToAllClients(ClientThread tCt, String tMsg) {
+	public void sendClientMsg(String msg) {
+		MSG_QUEUE.add(new Message(aes.decrypt(msg), false)); // 여기서 복호화
+	}
+
+	private void sendToAllClients(String msg) {
 		try {
 			lock.lock();
 			for (ClientThread ct : clientList) {
-				if (ct == tCt) {
-					continue;
-				}
-				ct.write(tMsg);
+				ct.write(msg);
 			}
 		} finally {
 			lock.unlock();
 		}
 	}
-
-	private static class ClientMsgVo {
-		private final ClientThread ct;
-		private final String msg;
-
-		public ClientMsgVo(ClientThread ct, String msg) {
-			this.ct = ct;
-			this.msg = msg;
-		}
-
-		public ClientThread getCt() {
-			return ct;
-		}
-
-		public String getMsg() {
-			return msg;
-		}
-	}
-
 }

@@ -1,7 +1,5 @@
 package server;
 
-import util.Aes128;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +19,7 @@ public class ClientThread extends Thread {
 		this.pw = new PrintWriter(sc.getOutputStream());
 		this.name = br.readLine().replaceAll("[^!-~ㄱ-힣]", "").trim();
 
-		ss.sendDirect("[" + this.name + "] Connect");
+		ss.sendLogin(this.name);
 	}
 
 	@Override
@@ -30,10 +28,10 @@ public class ClientThread extends Thread {
 		try {
 			String line;
 			while ((line = br.readLine()) != null) {
-				ss.send(this, line);
+				ss.sendClientMsg(line);
 			}
 		} catch (IOException e) {
-			ss.sendDirect("[" + name + "] Disconnect");
+			ss.sendLogout(name);
 			ss.remove(this);
 		}
 	}
@@ -44,9 +42,5 @@ public class ClientThread extends Thread {
 		}
 		pw.println(msg);
 		pw.flush();
-	}
-
-	public String getClientName() {
-		return name;
 	}
 }
