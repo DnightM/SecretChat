@@ -1,5 +1,6 @@
 package client.ui;
 
+import client.ui.hotkey.HotKey;
 import obj.Message;
 import util.Aes128;
 
@@ -31,7 +32,7 @@ public class UiMain {
 		this.name = name;
 	}
 
-	public void open() throws IOException {
+	public void open() {
 		int x = (int) DIMEN.getWidth() / 2 - VIEWER_WIDTH / 2;
 		int y = (int) DIMEN.getHeight() / 2 - VIEWER_HEIGHT / 2;
 		Rectangle viewerWindow = new Rectangle(x, y, VIEWER_WIDTH, VIEWER_HEIGHT);
@@ -46,6 +47,9 @@ public class UiMain {
 		write(view, write);
 		read(view);
 		move(view, write);
+
+		HotKey h = new HotKey();
+		h.run();
 	}
 
 	private Point p;
