@@ -2,9 +2,11 @@ package client.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class UiWriter extends JTextField {
-	private JFrame window;
+	private final JFrame window;
 
 	public UiWriter(Rectangle r) {
 		super();
@@ -30,6 +32,14 @@ public class UiWriter extends JTextField {
 			this.setPreferredSize(new Dimension(width, height));
 			this.setLayout(new BorderLayout());
 		}
+	}
+
+	public void setWindowComponentListener(ComponentAdapter ca) {
+		window.addComponentListener(ca);
+	}
+
+	public JFrame getWindow() {
+		return window;
 	}
 }
 

@@ -4,8 +4,8 @@ plugins {
 }
 
 ext {
-	process = 'Server'
-//	process = 'Client'
+//	process = 'Server'
+	process = 'Client'
 
 	processName = "test_${process}"
 }
@@ -43,5 +43,8 @@ dependencies {
 	implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
 	compile group: 'ch.qos.logback', name: 'logback-classic', version: "1.2.3"
 	compile group: 'ch.qos.logback', name: 'logback-core', version: "1.2.3"
+
+	// https://mvnrepository.com/artifact/com.1stleg/jnativehook
+	implementation group: 'com.1stleg', name: 'jnativehook', version: '2.1.0'
 
 }

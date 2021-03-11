@@ -4,13 +4,10 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 // https://banana-media-lab.tistory.com/entry/%ED%88%AC%EB%AA%85%ED%95%9C-JPanel-%EB%A7%8C%EB%93%A4%EA%B8%B0
 public class UiViewer extends JTextArea {
-	private ViewWindow window;
+	private final ViewWindow window;
 
 	public UiViewer(Rectangle r) {
 		super();
@@ -29,6 +26,14 @@ public class UiViewer extends JTextArea {
 		window.add(scrollPane);
 		window.pack();
 		window.setVisible(true);
+	}
+
+	public void moveWindow(int x, int y) {
+		window.setLocation(x, y);
+	}
+
+	public Point getPosition() {
+		return window.getLocation();
 	}
 
 	public void setTop() {
