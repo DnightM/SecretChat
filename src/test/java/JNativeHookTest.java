@@ -3,6 +3,7 @@ import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyAdapter;
 import org.jnativehook.keyboard.NativeKeyEvent;
 
+import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,10 +22,10 @@ public class JNativeHookTest {
 		GlobalScreen.addNativeKeyListener(new NativeKeyAdapter() {
 			@Override
 			public void nativeKeyReleased(NativeKeyEvent e) {
-
+				System.out.println(e.getKeyCode());
 			}
 		});
-
+		System.out.println(MouseInfo.getPointerInfo().getLocation());
 	}
 }
 

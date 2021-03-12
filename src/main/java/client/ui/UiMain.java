@@ -1,12 +1,14 @@
 package client.ui;
 
-import client.ui.hotkey.HotKey;
+import client.ui.component.UiViewer;
+import client.ui.component.UiWriter;
+import client.ui.controller.UiController;
 import obj.Message;
 import util.Aes128;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -44,28 +46,12 @@ public class UiMain {
 		// id 전송
 		pw.println(aes.encrypt(name));
 		pw.flush();
+
 		write(view, write);
 		read(view);
-		move(view, write);
 
-		HotKey h = new HotKey();
-		h.run();
-	}
-
-	private Point p;
-
-	private void move(UiViewer view, UiWriter write) {
-		p = write.getWindow().getLocation();
-		Point t = view.getPosition();
-		write.getWindow().addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				int x = e.getComponent().getX() - p.x;
-				int y = e.getComponent().getY() - p.y;
-				System.out.println(x + " " + y);
-				view.moveWindow(t.x + x, t.y + y);
-			}
-		});
+		UiController controller = new UiController(view, write);
+		controller.run();
 	}
 
 	private void read(UiViewer view) {

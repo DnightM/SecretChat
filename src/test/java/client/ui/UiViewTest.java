@@ -1,7 +1,7 @@
 package client.ui;
 
-import javax.swing.*;
-import javax.swing.text.DefaultCaret;
+import client.ui.component.UiViewer;
+
 import java.awt.*;
 
 public class UiViewTest {

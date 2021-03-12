@@ -1,4 +1,4 @@
-package client.ui;
+package client.ui.component;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -28,17 +28,14 @@ public class UiViewer extends JTextArea {
 		window.setVisible(true);
 	}
 
-	public void moveWindow(int x, int y) {
-		window.setLocation(x, y);
-	}
-
-	public Point getPosition() {
-		return window.getLocation();
-	}
 
 	public void setTop() {
 		window.setAlwaysOnTop(true);
 		window.setAlwaysOnTop(false);
+	}
+
+	public JFrame getWindow() {
+		return window;
 	}
 
 	private static class ViewWindow extends JFrame {

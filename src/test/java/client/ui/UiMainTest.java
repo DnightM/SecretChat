@@ -1,6 +1,7 @@
 package client.ui;
 
-import obj.Message;
+import client.ui.component.UiViewer;
+import client.ui.component.UiWriter;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
