@@ -3,20 +3,31 @@ package main;
 import server.ClientThread;
 import server.ServerSender;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class ServerMain {
 	@SuppressWarnings("InfiniteLoopStatement")
 	public static void main(String[] args) throws Exception {
-		Scanner sc = new Scanner(System.in);
-		String key = getString("비밀번호를 입력하세요 : ", sc);
-		int port = getInt("포트 번호를 입력하세요 : ", sc);
+		Properties p = new Properties();
+		File propertiesFile = new File("./server.properties");
+		if (propertiesFile.isFile()) {
+			p.load(new FileInputStream(propertiesFile));
+		} else {
+			System.out.println("need file : server.properties");
+			return;
+		}
+		String key = p.getProperty("pw");
+		int port = Integer.parseInt(p.getProperty("port"));
 
 		ServerSender ss = new ServerSender();
 		ss.start();
@@ -35,21 +46,6 @@ public class ServerMain {
 			}
 		}
 	}
-
-	private static int getInt(String msg, Scanner sc) {
-		System.out.print(new String(msg.getBytes(), StandardCharsets.UTF_8));
-		int t = sc.nextInt();
-		System.out.println();
-		return t;
-	}
-
-	private static String getString(String msg, Scanner sc) {
-		System.out.print(new String(msg.getBytes(), StandardCharsets.UTF_8));
-		String t = sc.nextLine();
-		System.out.println();
-		return t;
-	}
-
 
 	public static String getMyIp() throws UnknownHostException {
 		return InetAddress.getLocalHost().getHostAddress();
