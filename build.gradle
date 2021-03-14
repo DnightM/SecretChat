@@ -1,50 +1,93 @@
+import org.codehaus.groovy.runtime.GStringImpl
+
 plugins {
-	id 'java'
-	id 'application'
+    id 'java'
+    id 'application'
 }
 
 ext {
-//	process = 'Server'
-	process = 'Client'
+// 아래 Server 와 Client 주석을 번갈아 풀면서 한번씩 build 해주면 됨.
+    process = 'Server'
+//    process = 'Client'
 
-	processName = "chat_${process}"
+    processName = "chat_${process}" as GStringImpl
+    outputDir = "./output/${process}" as GStringImpl
 }
 
 mainClassName = "main.${process}Main"
 version '0.1.0'
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 jar {
-	manifest {
-		attributes 'Title': "${processName}", 'Version': version, 'Main-Class': mainClassName, 'Class-Path': '.', 'Implementation-Version': version + "_" + new Date().format("yyyyMMddHHmmss")
-	}
-	archiveName "${processName}_" + version + '.jar'
-	dependsOn configurations.runtime
-	from {
-		configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-	}
+    manifest {
+        attributes 'Title': "${processName}", 'Version': version, 'Main-Class': mainClassName, 'Class-Path': '.', 'Implementation-Version': version + "_" + new Date().format("yyyyMMddHHmmss")
+    }
+    archiveName "${processName}_" + version + '.jar'
+    dependsOn configurations.runtime
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    doLast {
+        copy {
+            from jar
+            into "${outputDir}"
+            println("copy jar")
+        }
+    }
 }
 
 repositories {
-	mavenCentral()
-	jcenter()
+    mavenCentral()
+    jcenter()
 }
 
 dependencies {
-	testCompile group: 'junit', name: 'junit', version: '4.12'
-	implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
-	compile group: 'ch.qos.logback', name: 'logback-classic', version: "1.2.3"
-	compile group: 'ch.qos.logback', name: 'logback-core', version: "1.2.3"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: "1.2.3"
+    compile group: 'ch.qos.logback', name: 'logback-core', version: "1.2.3"
+    compile group: 'com.1stleg', name: 'jnativehook', version: '2.1.0'
+}
 
-	// https://mvnrepository.com/artifact/com.1stleg/jnativehook
-	implementation group: 'com.1stleg', name: 'jnativehook', version: '2.1.0'
+task writeFile {
+    if (process == 'Server') {
+        doLast {
+            new File("${outputDir}", 'server.properties').text =
+                    """port=14567
+pw=test"""
+        }
+        doLast {
+            new File("${outputDir}", "${processName}_start.bat").text =
+                    """chcp 65001
+java -jar -Dfile.encoding=UTF-8 ${jar.archiveName}
+"""
+        }
+    } else {
+        doLast {
+            new File("${outputDir}", "${processName}_start.bat").text =
+                    """echo off
+chcp 65001
+start /B javaw.exe -Dfile.encoding=UTF-8 -jar ${jar.archiveName}
+"""
+        }
 
+    }
+}
+build {
+    dependsOn(writeFile)
+}
+
+clean {
+    String outputDirPath = new File(outputDir as String).getParentFile().getAbsolutePath()
+    delete outputDirPath
+    println("Delete ${outputDirPath}")
 }
