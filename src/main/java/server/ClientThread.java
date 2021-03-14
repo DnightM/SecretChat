@@ -1,24 +1,22 @@
 package server;
 
-import java.io.BufferedReader;
+import util.io.AesReader;
+import util.io.AesWriter;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 public class ClientThread extends Thread {
-	private final BufferedReader br;
-	private final PrintWriter pw;
+	private final AesReader br;
+	private final AesWriter bw;
 	private final String name;
 	private final ServerSender ss;
 
-	public ClientThread(ServerSender ss, Socket sc) throws Exception {
+	public ClientThread(ServerSender ss, Socket sc, String key) throws Exception {
 		this.ss = ss;
-
-		this.br = new BufferedReader(new InputStreamReader(sc.getInputStream()));
-		this.pw = new PrintWriter(sc.getOutputStream());
-		this.name = br.readLine().replaceAll("[^!-~ㄱ-힣]", "").trim();
-
+		this.br = new AesReader(sc.getInputStream(), key);
+		this.bw = new AesWriter(sc.getOutputStream(), key);
+		this.name = br.aesReadLine().replaceAll("[^!-~ㄱ-힣A-Za-z ]", "").trim();
 		ss.sendLogin(this.name);
 	}
 
@@ -27,7 +25,7 @@ public class ClientThread extends Thread {
 		super.run();
 		try {
 			String line;
-			while ((line = br.readLine()) != null) {
+			while ((line = br.aesReadLine()) != null) {
 				ss.sendClientMsg(line);
 			}
 		} catch (IOException e) {
@@ -36,11 +34,10 @@ public class ClientThread extends Thread {
 		}
 	}
 
-	public void write(String msg) {
+	public void write(String msg) throws IOException {
 		if (msg == null) {
 			return;
 		}
-		pw.println(msg);
-		pw.flush();
+		bw.aesWrite(msg);
 	}
 }

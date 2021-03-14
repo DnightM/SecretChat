@@ -56,7 +56,6 @@ public class UiController {
 				if (!USE_HOTKEY) {
 					return;
 				}
-				System.out.println(e.getKeyCode());
 				switch (e.getKeyCode()) {
 					// 옵션 여는 단축키
 					case NativeKeyEvent.VC_CONTROL:

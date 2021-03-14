@@ -7,11 +7,11 @@ ext {
 //	process = 'Server'
 	process = 'Client'
 
-	processName = "test_${process}"
+	processName = "chat_${process}"
 }
 
 mainClassName = "main.${process}Main"
-version '0.0.1'
+version '0.1.0'
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8

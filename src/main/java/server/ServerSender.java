@@ -1,22 +1,20 @@
 package server;
 
 import obj.Message;
-import util.Aes128;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ServerSender extends Thread {
-	private final Aes128 aes;
-
 	private final BlockingQueue<Message> MSG_QUEUE = new ArrayBlockingQueue<>(10000);
 	private final ArrayList<ClientThread> clientList = new ArrayList<>();
 	private final ReentrantLock lock = new ReentrantLock();
 
-	public ServerSender(String key) {
-		aes = new Aes128(key);
+	public ServerSender() {
+
 	}
 
 	@SuppressWarnings("InfiniteLoopStatement")
@@ -28,7 +26,7 @@ public class ServerSender extends Thread {
 				Message m = MSG_QUEUE.poll();
 				System.out.println(m.send()); // 콘솔
 
-				sendToAllClients(aes.encrypt(m.send())); // 최종적으로 보내는 곳에서 암호화
+				sendToAllClients(m.send()); // 최종적으로 보내는 곳에서 암호화
 			}
 		}
 	}
@@ -53,15 +51,15 @@ public class ServerSender extends Thread {
 	}
 
 	public void sendLogin(String msg) {
-		MSG_QUEUE.add(new Message("[" + aes.decrypt(msg) + "] connect", true));
+		MSG_QUEUE.add(new Message("[" + msg + "] connect", true));
 	}
 
 	public void sendLogout(String msg) {
-		MSG_QUEUE.add(new Message("[" + aes.decrypt(msg) + "] disconnect", true));
+		MSG_QUEUE.add(new Message("[" + msg + "] disconnect", true));
 	}
 
 	public void sendClientMsg(String msg) {
-		MSG_QUEUE.add(new Message(aes.decrypt(msg), false)); // 여기서 복호화
+		MSG_QUEUE.add(new Message(msg, false));
 	}
 
 	private void sendToAllClients(String msg) {
@@ -70,6 +68,8 @@ public class ServerSender extends Thread {
 			for (ClientThread ct : clientList) {
 				ct.write(msg);
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		} finally {
 			lock.unlock();
 		}

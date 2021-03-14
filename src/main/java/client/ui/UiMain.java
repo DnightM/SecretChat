@@ -4,15 +4,13 @@ import client.ui.component.UiViewer;
 import client.ui.component.UiWriter;
 import client.ui.controller.UiController;
 import obj.Message;
-import util.Aes128;
+import util.io.AesReader;
+import util.io.AesWriter;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 public class UiMain {
@@ -22,19 +20,17 @@ public class UiMain {
 	private final static int WRITER_HEIGHT = 70;
 	private final static Dimension DIMEN = Toolkit.getDefaultToolkit().getScreenSize();
 
-	private final Aes128 aes;
-	private final BufferedReader br;
-	private final PrintWriter pw;
+	private final AesReader br;
+	private final AesWriter bw;
 	private final String name;
 
 	public UiMain(Socket _socket, String key, String name) throws IOException {
-		this.aes = new Aes128(key);
-		this.br = new BufferedReader(new InputStreamReader(_socket.getInputStream()));
-		this.pw = new PrintWriter(_socket.getOutputStream());
+		this.br = new AesReader(_socket.getInputStream(), key);
+		this.bw = new AesWriter(_socket.getOutputStream(), key);
 		this.name = name;
 	}
 
-	public void open() {
+	public void open() throws IOException {
 		int x = (int) DIMEN.getWidth() / 2 - VIEWER_WIDTH / 2;
 		int y = (int) DIMEN.getHeight() / 2 - VIEWER_HEIGHT / 2;
 		Rectangle viewerWindow = new Rectangle(x, y, VIEWER_WIDTH, VIEWER_HEIGHT);
@@ -44,9 +40,8 @@ public class UiMain {
 		UiWriter write = new UiWriter(writerWindow);
 
 		// id 전송
-		pw.println(aes.encrypt(name));
-		pw.flush();
-
+		bw.aesWrite(name);
+		System.out.println("sended : " + name);
 		write(view, write);
 		read(view);
 
@@ -58,8 +53,8 @@ public class UiMain {
 		new Thread(() -> {
 			try {
 				String line;
-				while ((line = br.readLine()) != null) {
-					Message msg = new Message(aes.decrypt(line), false);
+				while ((line = br.aesReadLine()) != null) {
+					Message msg = new Message(line, false);
 					view.append(msg.send() + "\n");
 					System.out.println(msg.send());
 				}
@@ -75,8 +70,11 @@ public class UiMain {
 			write.setText("");
 
 			Message m = new Message(name, msg);
-			pw.println(aes.encrypt(m.send()));
-			pw.flush();
+			try {
+				bw.aesWrite(m.send());
+			} catch (IOException ioException) {
+				ioException.printStackTrace();
+			}
 		});
 		write.addMouseListener(new MouseAdapter() {
 			@Override

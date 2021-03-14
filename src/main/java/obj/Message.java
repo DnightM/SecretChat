@@ -21,10 +21,6 @@ public class Message {
 		}
 	}
 
-	public String getId() {
-		return id;
-	}
-
 	public String send() {
 		if (id == null) {
 			return msg.toString();

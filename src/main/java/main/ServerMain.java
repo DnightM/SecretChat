@@ -12,7 +12,7 @@ public class ServerMain {
 	public static void main(String[] args) throws IOException {
 		String key = "test";
 
-		ServerSender ss = new ServerSender(key);
+		ServerSender ss = new ServerSender();
 		ss.start();
 
 		ServerSocket s_socket = new ServerSocket(24567);
@@ -20,7 +20,7 @@ public class ServerMain {
 		while (true) {
 			try {
 				Socket c_socket = s_socket.accept();
-				ss.add(new ClientThread(ss, c_socket));
+				ss.add(new ClientThread(ss, c_socket, key));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

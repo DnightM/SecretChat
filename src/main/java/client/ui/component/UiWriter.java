@@ -2,6 +2,7 @@ package client.ui.component;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.charset.StandardCharsets;
 
 public class UiWriter extends JTextField {
 	private final JFrame window;
@@ -34,6 +35,11 @@ public class UiWriter extends JTextField {
 
 	public JFrame getWindow() {
 		return window;
+	}
+
+	@Override
+	public String getText() {
+		return new String(super.getText().getBytes(), StandardCharsets.UTF_8);
 	}
 }
 
