@@ -2,6 +2,7 @@ package client.ui.controller;
 
 import client.ui.component.UiViewer;
 import client.ui.component.UiWriter;
+import net.mariottini.swing.JFontChooser;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyAdapter;
@@ -11,6 +12,8 @@ import org.jnativehook.mouse.NativeMouseMotionAdapter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -19,10 +22,12 @@ public class UiController {
 	public static boolean USE_HOTKEY = true;
 	public static boolean VIEW_MOVE_WINDOW = false;
 
+	private final UiViewer view;
+
+	private final JFrame writeWindow;
 	private final JFrame viewWindow;
 	private int mx, my, wx, wy;
 
-	private final JFrame writeWindow;
 
 	static {
 		LogManager.getLogManager().reset();
@@ -39,6 +44,7 @@ public class UiController {
 	}
 
 	public UiController(UiViewer view, UiWriter write) {
+		this.view = view;
 		this.viewWindow = view.getWindow();
 		this.writeWindow = write.getWindow();
 	}
@@ -72,8 +78,13 @@ public class UiController {
 						System.exit(0);
 						break;
 					case 3658: // 키보드 우측 키패드의 - 키
-						// 옵션 여는 단축키
+						// 폰트 설정 옵션
+						openFontChooser();
 						break;
+					case 3639: // 키보드 우측 키패드의 * 키
+						// view 창 휠 맨 아래로
+						break;
+
 				}
 			}
 
@@ -95,6 +106,15 @@ public class UiController {
 				}
 			}
 		});
+	}
+
+	private void openFontChooser() {
+		JFontChooser fontChooser = new JFontChooser();
+		fontChooser.setFont(view.getFont());
+		int result = fontChooser.showDialog(viewWindow);
+		if (result == JFontChooser.APPROVE_OPTION) {
+			view.setFont(fontChooser.getSelectedFont());
+		}
 	}
 
 
