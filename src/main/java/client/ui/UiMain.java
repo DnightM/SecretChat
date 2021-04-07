@@ -73,6 +73,8 @@ public class UiMain {
 			try {
 				bw.aesWrite(m.send());
 			} catch (IOException ioException) {
+				view.append("Server closed. Exit this process.");
+				write.setEditable(false);
 				ioException.printStackTrace();
 			}
 		});

@@ -32,11 +32,13 @@ public class ServerMain {
 		ServerSender ss = new ServerSender();
 		ss.start();
 		ServerSocket s_socket = new ServerSocket(port);
-		System.out.println("ip : " + getMyIp());
-		System.out.println("port : " + port);
-		System.out.println("password : " + key);
-		System.out.println();
-		System.out.println("waiting connections...");
+		StringBuilder sb = new StringBuilder();
+		sb.append("ip : ").append(getMyIp()).append("\n");
+		sb.append("port : ").append(port).append("\n");
+		sb.append("password : ").append(key).append("\n");
+		sb.append("\n");
+		sb.append("waiting connections...").append("\n");
+		System.out.print(sb);
 		while (true) {
 			try {
 				Socket c_socket = s_socket.accept();

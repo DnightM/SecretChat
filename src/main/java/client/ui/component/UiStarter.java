@@ -90,8 +90,6 @@ public class UiStarter extends JFrame {
 		}
 
 		public String getInfo() {
-			System.out.println(jtf.getText());
-			System.out.println(new String(jtf.getText().getBytes(), StandardCharsets.UTF_8));
 			return new String(jtf.getText().getBytes(), StandardCharsets.UTF_8);
 		}
 	}
