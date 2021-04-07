@@ -5,17 +5,19 @@ plugins {
     id 'application'
 }
 
+version '0.3.0'
+
 ext {
 // 아래 Server 와 Client 주석을 번갈아 풀면서 한번씩 build 해주면 됨.
-//    process = 'Server'
-    process = 'Client'
+    process = 'Server'
+//    process = 'Client'
 
     processName = "chat_${process}" as GStringImpl
-    outputDir = "./output/${process}" as GStringImpl
+    outputDir = "./output/${process}_${version}" as GStringImpl
 }
 
 mainClassName = "main.${process}Main"
-version '0.3.0'
+
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -30,7 +32,7 @@ jar {
     manifest {
         attributes 'Title': "${processName}", 'Version': version, 'Main-Class': mainClassName, 'Class-Path': '.', 'Implementation-Version': version + "_" + new Date().format("yyyyMMddHHmmss")
     }
-    archiveName "${processName}_" + version + '.jar'
+    archiveName "${processName}_${version}.jar"
     dependsOn configurations.runtime
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
@@ -64,6 +66,8 @@ dependencies {
 }
 
 task writeFile {
+    dependsOn('copyFile')
+
     if (process == 'Server') {
         doLast {
             new File("${outputDir}", 'server.properties').text =
@@ -97,7 +101,6 @@ task copyFile(type: Copy) {
 
 build {
     dependsOn(writeFile)
-    dependsOn(copyFile)
 }
 
 clean {
