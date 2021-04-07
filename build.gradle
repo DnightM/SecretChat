@@ -7,15 +7,15 @@ plugins {
 
 ext {
 // 아래 Server 와 Client 주석을 번갈아 풀면서 한번씩 build 해주면 됨.
-    process = 'Server'
-//    process = 'Client'
+//    process = 'Server'
+    process = 'Client'
 
     processName = "chat_${process}" as GStringImpl
     outputDir = "./output/${process}" as GStringImpl
 }
 
 mainClassName = "main.${process}Main"
-version '0.2.0'
+version '0.3.0'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -87,8 +87,17 @@ start /B javaw.exe -Dfile.encoding=UTF-8 -jar ${jar.archiveName}
 
     }
 }
+
+task copyFile(type: Copy) {
+    if (process == 'Client') {
+        into "${outputDir}"
+        from './readme.txt'
+    }
+}
+
 build {
     dependsOn(writeFile)
+    dependsOn(copyFile)
 }
 
 clean {
