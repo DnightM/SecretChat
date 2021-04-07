@@ -8,6 +8,7 @@ import java.awt.*;
 // https://banana-media-lab.tistory.com/entry/%ED%88%AC%EB%AA%85%ED%95%9C-JPanel-%EB%A7%8C%EB%93%A4%EA%B8%B0
 public class UiViewer extends JTextArea {
 	private final ViewWindow window;
+	private final ViewScroll scrollPane;
 
 	public UiViewer(Rectangle r) {
 		super();
@@ -22,12 +23,17 @@ public class UiViewer extends JTextArea {
 		this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
 		window = new ViewWindow(r);
-		ViewScroll scrollPane = new ViewScroll(this);
+		this.scrollPane = new ViewScroll(this);
 		window.add(scrollPane);
 		window.pack();
 		window.setVisible(true);
 	}
 
+	public void setScrollToBottom() {
+		this.setCaretPosition(this.getDocument().getLength());
+		JScrollBar vertical = scrollPane.getVerticalScrollBar();
+		vertical.setValue(vertical.getMaximum());
+	}
 
 	public void setTop() {
 		window.setAlwaysOnTop(true);

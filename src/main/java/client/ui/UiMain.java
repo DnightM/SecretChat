@@ -16,7 +16,7 @@ import java.net.Socket;
 public class UiMain {
 	private final static int VIEWER_WIDTH = 500;
 	private final static int VIEWER_HEIGHT = 500;
-	private final static int WRITER_WIDTH = 200;
+	private final static int WRITER_WIDTH = 300;
 	private final static int WRITER_HEIGHT = 70;
 	private final static Dimension DIMEN = Toolkit.getDefaultToolkit().getScreenSize();
 

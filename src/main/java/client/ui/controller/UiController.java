@@ -28,6 +28,7 @@ public class UiController {
 	private final JFrame viewWindow;
 	private int mx, my, wx, wy;
 
+	private boolean shift = false;
 
 	static {
 		LogManager.getLogManager().reset();
@@ -69,22 +70,46 @@ public class UiController {
 						VIEW_MOVE_WINDOW = false;
 						break;
 					case 3662: // 키보드 우측 키패드의 + 키
-						// 키보드 우측 키패드의 + 누르면 모두 숨기기
-						viewWindow.setVisible(!viewWindow.isVisible());
-						writeWindow.setVisible(!writeWindow.isVisible());
+						if (shift) {
+							// view 화면 크기를 크게함
+							int height = viewWindow.getHeight();
+							if (height > 1000) {
+								break;
+							}
+							viewWindow.setSize(viewWindow.getWidth(), height + 50);
+							view.setScrollToBottom();
+						} else {
+							// 키보드 우측 키패드의 + 누르면 모두 숨기기
+							viewWindow.setVisible(!viewWindow.isVisible());
+							writeWindow.setVisible(!writeWindow.isVisible());
+						}
+						break;
+					case 3658: // 키보드 우측 키패드의 - 키
+						if (shift) {
+							// view 화면 크기를 작게함
+							int height = viewWindow.getHeight();
+							if (height < 100) {
+								break;
+							}
+							viewWindow.setSize(viewWindow.getWidth(), height - 50);
+							view.setScrollToBottom();
+						} else {
+							// 폰트 설정 옵션
+							openFontChooser();
+						}
+						break;
+					case 3639: // 키보드 우측 키패드의 * 키
+						// view 창 휠 맨 아래로
+						view.setScrollToBottom();
+
+						break;
+					case NativeKeyEvent.VC_SHIFT:
+						shift = false;
 						break;
 					case NativeKeyEvent.VC_F11:
 						// F11 강제 종료
 						System.exit(0);
 						break;
-					case 3658: // 키보드 우측 키패드의 - 키
-						// 폰트 설정 옵션
-						openFontChooser();
-						break;
-					case 3639: // 키보드 우측 키패드의 * 키
-						// view 창 휠 맨 아래로
-						break;
-
 				}
 			}
 
@@ -102,6 +127,9 @@ public class UiController {
 						wx = p.x;
 						wy = p.y;
 						VIEW_MOVE_WINDOW = true;
+						break;
+					case NativeKeyEvent.VC_SHIFT:
+						shift = true;
 						break;
 				}
 			}
