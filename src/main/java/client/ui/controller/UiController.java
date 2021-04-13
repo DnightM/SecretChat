@@ -66,8 +66,7 @@ public class UiController {
 				switch (e.getKeyCode()) {
 					// 옵션 여는 단축키
 					case NativeKeyEvent.VC_CONTROL:
-						// ctrl 누르고 있는 동안에는 view 창이 움직임
-						VIEW_MOVE_WINDOW = false;
+
 						break;
 					case 3662: // 키보드 우측 키패드의 + 키
 						if (shift) {
@@ -94,14 +93,18 @@ public class UiController {
 							viewWindow.setSize(viewWindow.getWidth(), height - 50);
 							view.setScrollToBottom();
 						} else {
-							// 폰트 설정 옵션
-							openFontChooser();
+							// - 누르고 있는 동안에는 view 창이 움직임
+							VIEW_MOVE_WINDOW = false;
 						}
 						break;
 					case 3639: // 키보드 우측 키패드의 * 키
-						// view 창 휠 맨 아래로
-						view.setScrollToBottom();
-
+						if (shift) {
+							// 폰트 설정 옵션
+							openFontChooser();
+						} else {
+							// view 창 휠 맨 아래로
+							view.setScrollToBottom();
+						}
 						break;
 					case NativeKeyEvent.VC_SHIFT:
 						shift = false;
